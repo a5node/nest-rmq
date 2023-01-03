@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: app
+    restart: always
+    build:
+      context: ./
+      dockerfile: ./apps/app/Dockerfile
+    ports:
+      - '3001:80'
+    networks:
+      - my-test
+
+networks:
+  my-test:
+    driver: bridge

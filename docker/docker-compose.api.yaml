@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  api:
+    container_name: "api"
+    restart: always
+    build:
+      context: .
+      dockerfile: ../apps/api/Dockerfile
+    volumes:
+      - ../dist/apps/api:/opt/app/dist
+    env_file:
+      - ../envs/.api.env
+      - ../envs/.mongo.env
+      - ../envs/.rmq.env
+    command: npm run start:prod
+    depends_on:
+      - rmq
+    ports:
+      - 8000:8000
+    networks:
+      - my-test
+    links:
+      - rmq
+ 
+  converter:
+    container_name: converter
+    restart: always
+    build:
+      context: ./
+      dockerfile: ./apps/converter/Dockerfile
+    volumes:
+      - ../dist/apps/converter:/opt/app/dist
+    env_file: 
+      - ../envs/.converter.env
+      - ../envs/.rmq.env
+    command: npm run start:prod
+    depends_on:
+      - rmq
+    networks:
+      - my-test
+
+networks:
+  my-test:
+    driver: bridge
